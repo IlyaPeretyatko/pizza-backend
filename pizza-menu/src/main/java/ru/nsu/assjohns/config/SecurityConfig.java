@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/menu").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/menu/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/menu/{id}").hasRole("ADMIN")
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new AuthTokenFilter(authStub), UsernamePasswordAuthenticationFilter.class);
         return http.build();

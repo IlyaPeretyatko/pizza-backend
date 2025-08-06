@@ -62,12 +62,9 @@ public class SecurityConfig {
                                                     .write("Forbidden.");
                                         }))
                 .authorizeHttpRequests(configurer ->
-                        configurer.requestMatchers("/users/**")
-                                .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/users/{id}")
-                                .authenticated()
-                                .requestMatchers("/auth/**")
-                                .permitAll()
+                        configurer.requestMatchers("/users/**").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/actuator/**").permitAll()
                                 .anyRequest().authenticated())
                 .anonymous(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new AuthTokenFilter(authTokenProvider),

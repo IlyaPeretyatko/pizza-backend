@@ -1,11 +1,8 @@
 server:
-  port: 8880
+  port: ${GATEWAY_INTERNAL_PORT}
   forward-headers-strategy: framework
 
-
 spring:
-  application:
-    name: pizza-cloud-gateway
   cloud:
     gateway:
       discovery:
@@ -14,12 +11,12 @@ spring:
           lower-case-service-id: true
       routes:
         - id: pizza-auth
-          uri: ${DOCKER_AUTH_URL}
+          uri: ${AUTH_URL}
           predicates:
             - Path=/auth/**,/users/**
             - Method=GET,POST, PATCH
         - id: pizza-menu
-          uri: ${DOCKER_MENU_URL}
+          uri: ${MENU_URL}
           predicates:
             - Path=/menu/**,/cart/**
             - Method=GET,POST, PATCH

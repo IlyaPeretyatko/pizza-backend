@@ -1,0 +1,105 @@
+services:
+  database-service:
+    container_name: ${DATABASE_CONTAINER_NAME}
+    image: postgres:12
+    env_file:
+      - .env
+    volumes:
+      - ./postgres:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    ports:
+      - "${DATABASE_EXTERNAL_PORT}:${DATABASE_INTERNAL_PORT}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  flyway:
+    container_name: ${FLYWAY_CONTAINER_NAME}
+    image: flyway/flyway
+    build:
+      context: ./pizza-database
+    env_file:
+      - .env
+    command:
+      - migrate
+    volumes:
+      - ./pizza-database/database/migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: jdbc:postgresql://${DATABASE_CONTAINER_NAME}:${DATABASE_INTERNAL_PORT}/${DATABASE_NAME}
+      FLYWAY_USER: ${DATABASE_USERNAME}
+      FLYWAY_PASSWORD: ${DATABASE_PASSWORD}
+      FLYWAY_CONNECT_RETRIES: 5
+    depends_on:
+      database-service:
+        condition: service_healthy
+  auth-service:
+    build:
+      context: ./pizza-auth
+      dockerfile: Dockerfile
+    container_name: ${AUTH_CONTAINER_NAME}
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: jdbc:postgresql://${DATABASE_CONTAINER_NAME}:${DATABASE_INTERNAL_PORT}/${DATABASE_NAME}
+    ports:
+      - "${AUTH_EXTERNAL_PORT}:${AUTH_INTERNAL_PORT}"
+    healthcheck:
+      test: [ "CMD", "curl", "-f",  "http://localhost:${AUTH_INTERNAL_PORT}/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      database-service:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+  menu-service:
+    build:
+      context: ./pizza-menu
+      dockerfile: Dockerfile
+    container_name: ${MENU_CONTAINER_NAME}
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: jdbc:postgresql://${DATABASE_CONTAINER_NAME}:${DATABASE_INTERNAL_PORT}/${DATABASE_NAME}
+    ports:
+      - "${MENU_EXTERNAL_PORT}:${MENU_INTERNAL_PORT}"
+    healthcheck:
+      test: [ "CMD", "curl", "-f",  "http://localhost:${MENU_INTERNAL_PORT}/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      database-service:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+      auth-service:
+        condition: service_healthy
+  gateway-service:
+    build:
+      context: ./pizza-cloud-gateway
+      dockerfile: Dockerfile
+    container_name: ${GATEWAY_CONTAINER_NAME}
+    env_file:
+      - .env
+    environment:
+      AUTH_URL: http://${AUTH_CONTAINER_NAME}:${AUTH_INTERNAL_PORT}/
+      MENU_URL: http://${MENU_CONTAINER_NAME}:${MENU_INTERNAL_PORT}/
+    ports:
+      - "${GATEWAY_EXTERNAL_PORT}:${GATEWAY_INTERNAL_PORT}"
+    depends_on:
+      database-service:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+      auth-service:
+        condition: service_healthy
+      menu-service:
+        condition: service_healthy

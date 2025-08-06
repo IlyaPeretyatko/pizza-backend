@@ -1,20 +1,26 @@
 server:
-  port: 8092
-
+  port: ${MENU_INTERNAL_PORT}
 
 auth:
   grpc:
     host: ${AUTH_CONTAINER_NAME}
-    port: ${GRPC_AUTH_PORT}
+    port: ${GRPC_AUTH_SERVER_PORT}
 
 spring:
-  application:
-    name: pizza-menu
   datasource:
-    url: ${DOCKER_POSTGRES_URL}
+    url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
 
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info
 
 
 
