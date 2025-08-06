@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pizza-cloud-gateway
+    env_file:
+      - .env
+    environment:
+      DOCKER_AUTH_URL: http://${AUTH_CONTAINER_NAME}:${AUTH_CONTAINER_PORT}/
+      DOCKER_MENU_URL: http://${MENU_CONTAINER_NAME}:${MENU_CONTAINER_PORT}/
+    ports:
+      - "${SERVICE_PORT}:8880"
+    networks:
+      - pizza_network
+
+networks:
+  pizza_network:
+    external: true

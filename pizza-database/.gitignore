@@ -1,0 +1,7 @@
+.gradle/
+.idea/
+classes/
+build/
+out/
+*.iml
+postgres_data
