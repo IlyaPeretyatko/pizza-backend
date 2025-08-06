@@ -1,0 +1,5 @@
+rootProject.name = 'pizza-backend'
+
+include 'pizza-auth'
+include 'pizza-menu'
+include 'pizza-cloud-gateway'
