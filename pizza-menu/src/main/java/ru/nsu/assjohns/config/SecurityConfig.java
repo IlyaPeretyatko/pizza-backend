@@ -47,11 +47,22 @@ public class SecurityConfig {
                                             response.getWriter()
                                                     .write("Access denied.");
                                         }))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/menu").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/menu/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/menu/{id}").hasRole("ADMIN")
-                        .requestMatchers("/actuator/**").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/menu")
+                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/menu/{id}")
+                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/menu/{id}")
+                        .hasRole("ADMIN")
+                        .requestMatchers("/actuator/**")
+                        .permitAll()
+                        .requestMatchers(
+                                "/v3/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        )
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .addFilterBefore(new AuthTokenFilter(authStub), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

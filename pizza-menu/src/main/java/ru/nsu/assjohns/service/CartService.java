@@ -44,7 +44,7 @@ public class CartService {
 
     @Transactional
     public void updateCartItem(long id, CartPatchRequest cartPatchRequest) {
-        Cart cart = cartRepository.findById(id).orElseThrow(() -> new ServiceException(404, "Cart item not found."));
+        Cart cart = cartRepository.findById(id).orElseThrow(() -> new ServiceException(404, "Cart item was not found."));
         long authenticationId = ((UserResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         if (cart.getUserId() != authenticationId) {
             throw new ServiceException(401, "Unauthorized.");

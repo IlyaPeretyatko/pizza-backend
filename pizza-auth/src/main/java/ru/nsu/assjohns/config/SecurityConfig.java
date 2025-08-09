@@ -62,10 +62,20 @@ public class SecurityConfig {
                                                     .write("Forbidden.");
                                         }))
                 .authorizeHttpRequests(configurer ->
-                        configurer.requestMatchers("/users/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/actuator/**").permitAll()
-                                .anyRequest().authenticated())
+                        configurer.requestMatchers("/users/**")
+                                .permitAll()
+                                .requestMatchers("/auth/**")
+                                .permitAll()
+                                .requestMatchers("/actuator/**")
+                                .permitAll()
+                                .requestMatchers(
+                                        "/v3/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
+                                )
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
                 .anonymous(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new AuthTokenFilter(authTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);

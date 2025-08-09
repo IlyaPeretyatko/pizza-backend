@@ -22,5 +22,16 @@ management:
       exposure:
         include: health,info
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+    doc-expansion: none
+
 
 

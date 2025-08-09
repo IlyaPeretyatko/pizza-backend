@@ -28,7 +28,7 @@ public class MenuService {
 
     @Transactional(readOnly = true)
     public MenuResponse getMenuPosition(long id) {
-        return menuMapper.toMenuResponse(menuRepository.findById(id).orElseThrow(() -> new ServiceException(404, "Menu position not found.")));
+        return menuMapper.toMenuResponse(menuRepository.findById(id).orElseThrow(() -> new ServiceException(404, "Menu position was not found.")));
     }
 
     @Transactional
@@ -39,7 +39,7 @@ public class MenuService {
 
     @Transactional
     public void updateMenuPosition(long id, MenuPatchRequest menuPatchRequest) {
-        Menu menu = menuRepository.findById(id).orElseThrow(() -> new ServiceException(404, "Menu position not found."));
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new ServiceException(404, "Menu position was not found."));
         menuMapper.updateMenu(menu, menuPatchRequest);
         menuRepository.save(menu);
     }
@@ -47,7 +47,7 @@ public class MenuService {
     @Transactional
     public void deleteMenuPosition(long id) {
         if (!existsMenuPosition(id)) {
-            throw new ServiceException(404, "Menu position not found.");
+            throw new ServiceException(404, "Menu position was not found.");
         }
         menuRepository.deleteById(id);
     }

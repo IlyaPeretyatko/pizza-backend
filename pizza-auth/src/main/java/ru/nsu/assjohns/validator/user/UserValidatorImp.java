@@ -1,4 +1,4 @@
-package ru.nsu.assjohns.validator.auth;
+package ru.nsu.assjohns.validator.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

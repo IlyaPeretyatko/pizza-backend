@@ -82,7 +82,7 @@ public class AuthTokenProvider {
     public AuthResponse refreshToken(String refreshToken) {
         AuthResponse authResponse = new AuthResponse();
         if (!isValid(refreshToken)) {
-            throw new ServiceException(HttpStatus.FORBIDDEN.value(), "Access denied.");
+            throw new ServiceException(HttpStatus.FORBIDDEN.value(), "Invalid refresh token..");
         }
         long id = getId(refreshToken);
         User user = userService.getUserById(id);

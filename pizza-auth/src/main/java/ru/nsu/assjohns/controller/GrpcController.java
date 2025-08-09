@@ -3,7 +3,6 @@ package ru.nsu.assjohns.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.grpc.server.service.GrpcService;
 import ru.nsu.assjohns.dto.user.UserGetResponse;
-import ru.nsu.assjohns.entity.User;
 import ru.nsu.assjohns.grpc.AuthServiceGrpc;
 import ru.nsu.assjohns.grpc.UserRequest;
 import ru.nsu.assjohns.grpc.UserResponse;
